@@ -1,33 +1,36 @@
 //first step
+require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-
-
 const app = express();
 app.use(express.json());
-
-mongoose.connect('mongodb://localhost:27017/todoDB')
-.then(() => console.log("connected to mongoDB"))
-.catch(err => console.error("could not connect", err));
-
+const mongoose = require("mongoose");
 
 const Contact = require("./models/Contact");
 
+async function dbconnection() {
+    try {
+        await mongoose.connect("mongodb://127.0.0.1:27017/firstApp");
+        console.log("MongoDB connected successfully");
+    } catch (err) {
+        console.error("MongoDB connection error:", err);
+    }
+}
+dbconnection();
 
+const Contact = require("./models/Contact");
 
 
 //post contact
 app.post('/api/contact', async (req , res) => {
     try {
-        const {fullName, phones=[], socialMedia={}} = req.body;
-        const contact = await Contact.create ({fullName, phones, socialMedia})
+        const Contact = await Contact.create (req.body);
         res.json ({
             success: true,
             msg:"created contact successfully",
-            data: contact,
+            data: Contact,
         });
     } catch (error) {
-        res.json ({ error: error.message});
+        res.json ({success: false, error: error.message});
     }
 });
 app.get('/api/contact', async (req, res) => {

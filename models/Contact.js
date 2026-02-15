@@ -1,38 +1,26 @@
 const mongoose = require("mongoose");
 
-const ContactSchema = new mongoose.Schema(
-  {
+const ContactSchema = new mongoose.Schema({
     fullName: {
-      type: String,
-      required: true,
-      trim: true
+        type: String,
+        required: true,
+        trim: true
     },
     phones: {
-      type: [String],
+        type: [String],
     },
-
     socialMedia: {
-      type: [
-        {
-          platform: {
+        platform: {
             type: String,
             enum: ["facebook", "linkedin"],
             required: true,
-          },
-          url: {
+        },
+        url: {
             type: String,
             required: true,
             trim: true,
-          },
-        },
-      ],
-      set: (values) =>
-        Array.from(
-          new Map(values.map((v) => [v.platform, v])).values()
-        )
-    },
-  },
-  { timestamps: true }
-);
+        }
+    }
+}, { timestamps: true }); 
 
 module.exports = mongoose.model("Contact", ContactSchema);
